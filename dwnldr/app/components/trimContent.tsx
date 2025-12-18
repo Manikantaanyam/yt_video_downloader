@@ -5,7 +5,7 @@ import MovieClip from "./YoutubePlayer";
 
 interface TrimSliderProps {
   videoId: string;
-  duration: number; // seconds
+  duration: number;
 }
 
 const SNAP_SECONDS = 1;
@@ -26,7 +26,6 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
   const [endSeconds, setEndSeconds] = useState(DURATION);
   const [hoverSeconds, setHoverSeconds] = useState<number | null>(null);
 
-  /* ---------------- Resize Observer ---------------- */
   useEffect(() => {
     if (!barRef.current) return;
 
@@ -40,7 +39,6 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
     return () => observer.disconnect();
   }, []);
 
-  /* ---------------- Drag Logic (Mouse + Touch) ---------------- */
   useEffect(() => {
     const onMove = (clientX: number) => {
       if (!draggingRef.current || !barRef.current || barWidth === 0) return;
@@ -75,7 +73,6 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
     };
   }, [barWidth, startSeconds, endSeconds, DURATION]);
 
-  /* ---------------- Helpers ---------------- */
   const formatTime = (s: number) => {
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
@@ -90,7 +87,6 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
   const startPx = (startSeconds / DURATION) * barWidth;
   const endPx = (endSeconds / DURATION) * barWidth;
 
-  /* ---------------- Bar Events ---------------- */
   const onBarClick = (e: React.MouseEvent) => {
     if (!barRef.current || barWidth === 0) return;
 
@@ -117,90 +113,87 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
     setHoverSeconds(sec);
   };
 
-  /* ---------------- Ticks ---------------- */
   const totalTicks = Math.floor(barWidth / PIXELS_PER_TICK);
 
   return (
-    <div className=" max-w-[900px] px-3 sm:px-6 mt-6">
+    <div className=" max-w-225 px-3 sm:px-6 mt-6 mb-3">
       <MovieClip videoId={videoId} start={startSeconds} end={endSeconds} />
 
-      {/* Time Labels */}
       <div className="flex justify-between mt-4 text-sm sm:text-base font-mono text-black">
         <span>{formatTime(startSeconds)}</span>
         <span>{formatTime(endSeconds)}</span>
       </div>
 
-      {/* Slider */}
-      <div
-        ref={barRef}
-        onClick={onBarClick}
-        onMouseMove={onBarMove}
-        onMouseLeave={() => setHoverSeconds(null)}
-        className="
-          relative w-full h-12 sm:h-14 mt-2 rounded-lg
-          bg-linear-to-r from-[#2a0000] via-[#8b0000] to-[#2a0000]
-          overflow-hidden
-        "
-      >
-        {/* Ticks */}
-        {Array.from({ length: totalTicks }).map((_, i) => (
+      <div className="relative w-full">
+        <div
+          ref={barRef}
+          onClick={onBarClick}
+          onMouseMove={onBarMove}
+          onMouseLeave={() => setHoverSeconds(null)}
+          className="
+      relative w-full h-12 sm:h-14 mt-2 rounded-lg
+      bg-linear-to-r from-[#2a0000] via-[#8b0000] to-[#2a0000]
+      overflow-hidden
+    "
+        >
+          {Array.from({ length: totalTicks }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute top-0 bottom-0 w-[1px] bg-white/20"
+              style={{ left: `${(i / totalTicks) * barWidth}px` }}
+            />
+          ))}
+
           <div
-            key={i}
-            className="absolute top-0 bottom-0 w-[1px] bg-white/20"
-            style={{ left: `${(i / totalTicks) * barWidth}px` }}
+            className="absolute top-0 h-full bg-red-500/30"
+            style={{ left: startPx, width: endPx - startPx }}
           />
-        ))}
 
-        {/* Selected Range */}
-        <div
-          className="absolute top-0 h-full bg-red-500/30"
-          style={{ left: startPx, width: endPx - startPx }}
-        />
+          <div
+            className="absolute top-0 h-full bg-white cursor-ew-resize touch-none"
+            style={{
+              width: HANDLE_WIDTH,
+              left: startPx - HANDLE_WIDTH / 2,
+            }}
+            onMouseDown={() => (draggingRef.current = "left")}
+            onTouchStart={() => (draggingRef.current = "left")}
+          />
 
-        {/* Handles */}
-        <div
-          className="absolute top-0 h-full bg-white cursor-ew-resize touch-none"
-          style={{
-            width: HANDLE_WIDTH,
-            left: startPx - HANDLE_WIDTH / 2,
-          }}
-          onMouseDown={() => (draggingRef.current = "left")}
-          onTouchStart={() => (draggingRef.current = "left")}
-        />
+          <div
+            className="absolute top-0 h-full bg-white cursor-ew-resize touch-none"
+            style={{
+              width: HANDLE_WIDTH,
+              left: endPx - HANDLE_WIDTH / 2,
+            }}
+            onMouseDown={() => (draggingRef.current = "right")}
+            onTouchStart={() => (draggingRef.current = "right")}
+          />
 
-        <div
-          className="absolute top-0 h-full bg-white cursor-ew-resize touch-none"
-          style={{
-            width: HANDLE_WIDTH,
-            left: endPx - HANDLE_WIDTH / 2,
-          }}
-          onMouseDown={() => (draggingRef.current = "right")}
-          onTouchStart={() => (draggingRef.current = "right")}
-        />
-
-        {/* Hover Indicator */}
-        {hoverSeconds !== null && (
-          <>
+          {hoverSeconds !== null && (
             <div
               className="absolute top-0 bottom-0 w-[1px] bg-yellow-400"
               style={{
                 left: `${(hoverSeconds / DURATION) * barWidth}px`,
               }}
             />
-            <div
-              className="
-                absolute -top-7 px-2 py-1 text-xs
-                bg-black text-white rounded
-                pointer-events-none
-              "
-              style={{
-                left: `${(hoverSeconds / DURATION) * barWidth}px`,
-                transform: "translateX(-50%)",
-              }}
-            >
-              {formatTime(hoverSeconds)}
-            </div>
-          </>
+          )}
+        </div>
+
+        {hoverSeconds !== null && (
+          <div
+            className="
+        absolute -top-6 px-2 py-1 text-xs
+        bg-black text-white rounded
+        pointer-events-none
+        whitespace-nowrap
+      "
+            style={{
+              left: `${(hoverSeconds / DURATION) * barWidth}px`,
+              transform: "translateX(-50%)",
+            }}
+          >
+            {formatTime(hoverSeconds)}
+          </div>
         )}
       </div>
     </div>

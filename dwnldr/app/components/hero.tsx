@@ -16,26 +16,22 @@ export default function Hero() {
   const { getInfo, loading, error, data } = useYoutubeInfo();
 
   return (
-    <section>
-      <div className="w-full flex flex-col justify-center items-center mt-3 gap-4">
-        <div>
-          <h1 className="font-semibold text-[14px] md:text-[22px] lg:text-[26px]">
-            YOUTUBE VIDEO / AUDIO DOWNLOADER
-          </h1>
-        </div>
+    <section className="w-full px-3 sm:px-6">
+      <div className="w-full flex flex-col items-center mt-4 gap-4">
+        <h1 className="font-semibold text-[14px] sm:text-[18px] md:text-[22px] lg:text-[26px] text-center">
+          YOUTUBE VIDEO / AUDIO DOWNLOADER
+        </h1>
 
-        <div className="relative flex w-47 md:w-55 bg-black h-7.5 sm:h-10 rounded-full ">
+        <div className="relative flex w-44 sm:w-52 bg-black h-8 sm:h-10 rounded-full overflow-hidden">
           <div
             className={`absolute bg-red-600 w-1/2 h-full rounded-full transition-all duration-300 ${
               downloadType === "video" ? "left-0" : "left-1/2"
             }`}
-          ></div>
+          />
 
           <button
-            onClick={() => {
-              setDownloadType("video");
-            }}
-            className={` flex-1 z-10 text-[12px] md:text-[16px] font-bold text-center ${
+            onClick={() => setDownloadType("video")}
+            className={`flex-1 z-10 text-xs sm:text-sm font-bold ${
               downloadType === "video" ? "text-white" : "text-white/70"
             }`}
           >
@@ -44,7 +40,7 @@ export default function Hero() {
 
           <button
             onClick={() => setDownloadType("audio")}
-            className={` flex-1 z-10 text-[12px] md:text-[16px] font-bold text-center ${
+            className={`flex-1 z-10 text-xs sm:text-sm font-bold ${
               downloadType === "audio" ? "text-white" : "text-white/70"
             }`}
           >
@@ -52,50 +48,70 @@ export default function Hero() {
           </button>
         </div>
 
-        <div className="input-bar-1 flex flex-col items-center">
-          <div className="flex items-center justify-center text-white w-full">
-            <div className="flex w-[320px] sm:w-159 lg:w-258 bg-black rounded-full h-10 md:h-12.5 gap-3">
-              <input
-                onChange={(e) => setUrl(e.target.value)}
-                className="flex-1 bg-transparent outline-none pl-6"
-                id="yt"
-                type="text"
-                placeholder="enter the youtube video url here.."
-              />
+        {/* Input Capsule */}
+        <div className="w-full flex justify-center">
+          <div
+            className="
+              flex items-center
+              w-full max-w-3xl
+              bg-black
+              rounded-full
+              h-10 sm:h-12
+              overflow-hidden
+            "
+          >
+            <input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              type="text"
+              placeholder="enter the youtube video url here.."
+              className="
+                flex-1
+                min-w-0
+                bg-transparent
+                outline-none
+                px-4 sm:px-6
+                text-white
+                text-sm sm:text-base
+              "
+              autoComplete="off"
+            />
 
-              <button
-                onClick={() => getInfo(url)}
-                disabled={loading}
-                type="submit"
-                className={`
-                 relative
-                 bg-red-600 hover:bg-red-500
-                 rounded-full
-                 px-6 md:px-10
-                 h-10 md:h-12.5
-                 min-w-30 md:min-w-40
-                 font-semibold
-                 flex items-center justify-center
-                 transition-all
-                 ${loading ? "cursor-not-allowed" : ""}
-                `}
-              >
-                <span className={loading ? "opacity-0" : "opacity-100"}>
-                  Download
-                </span>
+            <button
+              onClick={() => getInfo(url)}
+              disabled={loading}
+              className="
+                relative
+                h-full
+                px-6 sm:px-10
+                bg-red-600 hover:bg-red-500
+                text-white
+                font-semibold
+                flex items-center justify-center
+                transition-all
+                disabled:opacity-70
+                disabled:cursor-not-allowed
+                rounded-full
+                shrink-0
+              "
+            >
+              <span className={loading ? "opacity-0" : "opacity-100"}>
+                Download
+              </span>
 
-                {loading && (
-                  <span className="absolute w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                )}
-              </button>
-            </div>
+              {loading && (
+                <span className="absolute w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
+            </button>
           </div>
         </div>
       </div>
-      <div className="flex justify-center">
-        {error && <p>{error}</p>}
+
+      <div className="flex justify-center mt-6 w-full">
+        {error && <p className="text-red-500">{error}</p>}
+
         {path === "/trim" && data ? (
-          <TrimSlider videoId={data?.videoId} duration={data?.duration} />
+          <TrimSlider videoId={data.videoId} duration={data.duration} />
         ) : (
           data && <Content url={url} data={data} downloadType={downloadType} />
         )}
