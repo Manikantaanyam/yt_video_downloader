@@ -18,7 +18,7 @@ export default function useDownloadVideo({
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/download`,
+        `${process.env.NEXT_PUBLIC_API_URL}/youtube/download`,
         {
           url,
           downloadType,
