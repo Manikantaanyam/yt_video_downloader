@@ -10,7 +10,8 @@ def get_video_info(url: str) -> YoutubeInfo:
             title=info.get("title", ""),
             description=info.get("description", ""),
             duration=str(info.get("duration", "")),
-            thumbnail=info.get("thumbnail", "")
+            thumbnail=info.get("thumbnail", ""),
+            videoId = info.get("id","")
         )
 
 def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
@@ -31,3 +32,4 @@ def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
     finally:
         if os.path.exists(filename):
             os.remove(filename)
+

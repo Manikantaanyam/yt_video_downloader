@@ -3,6 +3,7 @@ export type YoutubeResult = {
   title: string;
   description: string;
   duration: string;
+  videoId?: string;
 };
 
 export type DownloadType = "video" | "audio";

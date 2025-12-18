@@ -4,9 +4,12 @@ import { useState } from "react";
 import Content from "./content";
 import useYoutubeInfo from "../hooks/useYoutubeInfo";
 import { DownloadType } from "../types/youtube";
+import { usePathname } from "next/navigation";
+import TrimSlider from "./trimContent";
 
 export default function Hero() {
-  const [tag, setTag] = useState(true);
+  const path = usePathname();
+
   const [url, setUrl] = useState("");
   const [downloadType, setDownloadType] = useState<DownloadType>("video");
 
@@ -91,7 +94,11 @@ export default function Hero() {
       </div>
       <div className="flex justify-center">
         {error && <p>{error}</p>}
-        {data && <Content url={url} data={data} downloadType={downloadType} />}
+        {path === "/trim" && data ? (
+          <TrimSlider videoId={data?.videoId} duration={data?.duration} />
+        ) : (
+          data && <Content url={url} data={data} downloadType={downloadType} />
+        )}
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class UrlData(BaseModel):
     url: str
@@ -7,5 +8,7 @@ class UrlData(BaseModel):
 class YoutubeInfo(BaseModel):
     title: str
     description: str
-    duration: str
+    duration: Optional[str]
     thumbnail: str
+    videoId : Optional[str]
+
