@@ -111,7 +111,12 @@ export default function Hero() {
         {error && <p className="text-red-500">{error}</p>}
 
         {path === "/trim" && data ? (
-          <TrimSlider videoId={data.videoId} duration={data.duration} />
+          <TrimSlider
+            url={url}
+            downloadType={downloadType}
+            videoId={data.videoId}
+            duration={data.duration}
+          />
         ) : (
           data && <Content url={url} data={data} downloadType={downloadType} />
         )}

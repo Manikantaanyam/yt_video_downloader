@@ -2,20 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 import MovieClip from "./YoutubePlayer";
+import useDownloadVideo from "../hooks/useDownloadVideo";
 
 interface TrimSliderProps {
   videoId: string;
   duration: number;
+  url: string;
+  downloadType: "video" | "audio";
 }
 
 const SNAP_SECONDS = 1;
-const HANDLE_WIDTH = 10;
+const HANDLE_WIDTH = 8;
 const PIXELS_PER_TICK = 12;
 
 const clamp = (v: number, min: number, max: number) =>
   Math.min(Math.max(v, min), max);
 
-export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
+export default function TrimSlider({
+  downloadType,
+  url,
+  videoId,
+  duration,
+}: TrimSliderProps) {
   const DURATION = Math.max(duration, 1);
 
   const barRef = useRef<HTMLDivElement>(null);
@@ -115,6 +123,13 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
 
   const totalTicks = Math.floor(barWidth / PIXELS_PER_TICK);
 
+  const { downloadVideo, loading, error } = useDownloadVideo({
+    url,
+    downloadType,
+    startTime: startSeconds.toString(),
+    endTime: endSeconds.toString(),
+  });
+
   return (
     <div className=" max-w-225 px-3 sm:px-6 mt-6 mb-3">
       <MovieClip videoId={videoId} start={startSeconds} end={endSeconds} />
@@ -150,7 +165,7 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
           />
 
           <div
-            className="absolute top-0 h-full bg-white cursor-ew-resize touch-none"
+            className="absolute top-0 h-full bg-yellow-500 rounded-s-md cursor-ew-resize touch-none"
             style={{
               width: HANDLE_WIDTH,
               left: startPx - HANDLE_WIDTH / 2,
@@ -160,7 +175,7 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
           />
 
           <div
-            className="absolute top-0 h-full bg-white cursor-ew-resize touch-none"
+            className="absolute top-0 h-full bg-yellow-500 rounded-e-sm cursor-ew-resize touch-none"
             style={{
               width: HANDLE_WIDTH,
               left: endPx - HANDLE_WIDTH / 2,
@@ -195,6 +210,16 @@ export default function TrimSlider({ videoId, duration }: TrimSliderProps) {
             {formatTime(hoverSeconds)}
           </div>
         )}
+      </div>
+      <div className="mt-3 mb-3">
+        <p>{formatTime(endSeconds - startSeconds)}</p>
+        <button
+          disabled={loading}
+          onClick={downloadVideo}
+          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-800"
+        >
+          save to device
+        </button>
       </div>
     </div>
   );

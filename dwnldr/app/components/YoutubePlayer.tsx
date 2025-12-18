@@ -18,7 +18,7 @@ const MovieClip = ({ videoId, start, end }: any) => {
   };
 
   return (
-    <YouTube videoId={videoId} opts={options} onReady={onReady} id="video" />
+    <YouTube videoId={videoId} opts={options} onReady={onReady} id="audio" />
   );
 };
 

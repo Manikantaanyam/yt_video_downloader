@@ -15,21 +15,36 @@ def get_video_info(url: str) -> YoutubeInfo:
         )
 
 def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
+
+    def download_section(info_dict, ydl):
+        sections = [
+            {
+                "start_time": float(data.startTime),
+                "end_time":float(data.endTime)
+            }
+        ]
+        return sections
+    
     if data.downloadType == "video":
-        ydl_opts = {"format": "best", "outtmpl": "video.mp4", "quiet": True}
-        filename = "video.mp4"
+        filename = "default.mp4"
+        if data.startTime is not None and data.endTime is not None:
+            ydl_opts = {"format": "bestvideo+bestaudio/best", "outtmpl": filename,  "download_ranges": download_section}
+        else:
+            ydl_opts = {"format": "bestvideo+bestaudio/best", "outtmpl": filename}
     else:
-        ydl_opts = {"format": "bestaudio/best", "outtmpl": "audio.mp3", "quiet": True}
-        filename = "audio.mp3"
+        filename = "default.mp3"
+        if data.startTime is not None and data.endTime is not None:
+            ydl_opts = {"format": "bestaudio/best", "outtmpl": filename, "quiet": True, "download_ranges": download_section}
+        else:
+            ydl_opts = {"format": "bestaudio/best", "outtmpl": filename, "quiet": True}
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([data.url])
-
+            ydl.download([data.url])    
         with open(filename, "rb") as f:
             while chunk := f.read(1024 * 1024):
                 yield chunk
     finally:
-        if os.path.exists(filename):
+         if os.path.exists(filename):
             os.remove(filename)
 

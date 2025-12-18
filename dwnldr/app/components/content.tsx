@@ -19,7 +19,7 @@ export default function Content({
       {error && <p>{error}</p>}
       <div className="h-full">
         <img
-          className="w-100 h-40 md:h-50 lg:h-70"
+          className="w-120 h-50 sm:h-70 "
           src={data.thumbnail}
           alt={data.title}
         />

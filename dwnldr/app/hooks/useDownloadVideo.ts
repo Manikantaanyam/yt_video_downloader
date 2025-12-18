@@ -5,9 +5,13 @@ import { DownloadType } from "../types/youtube";
 export default function useDownloadVideo({
   url,
   downloadType,
+  startTime,
+  endTime,
 }: {
   url: string;
   downloadType: DownloadType;
+  startTime?: string;
+  endTime?: string;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +26,8 @@ export default function useDownloadVideo({
         {
           url,
           downloadType,
+          startTime,
+          endTime,
         },
         {
           responseType: "blob",

@@ -4,6 +4,8 @@ from typing import Optional
 class UrlData(BaseModel):
     url: str
     downloadType: str | None = None 
+    startTime : str | None = None
+    endTime : str | None = None
 
 class YoutubeInfo(BaseModel):
     title: str
