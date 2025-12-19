@@ -112,6 +112,7 @@ export default function Hero() {
 
         {path === "/trim" && data ? (
           <TrimSlider
+            key={data.videoId}
             url={url}
             downloadType={downloadType}
             videoId={data.videoId}

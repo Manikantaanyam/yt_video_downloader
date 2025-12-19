@@ -53,9 +53,28 @@ export default function Content({
           <button
             disabled={loading}
             onClick={downloadVideo}
-            className="bg-red-600 text-white px-4 py-2 rounded-md"
+            className="
+                relative
+                min-h-10
+                px-6 sm:px-10
+                bg-red-600 hover:bg-red-500
+                text-white
+                font-semibold
+                flex items-center justify-center
+                transition-all
+                disabled:opacity-70
+                disabled:cursor-not-allowed
+                rounded-md
+                shrink-0
+              "
           >
-            save to device
+            <span className={loading ? "opacity-0" : "opacity-100"}>
+              save to device
+            </span>
+
+            {loading && (
+              <span className="absolute w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
           </button>
         </div>
       </div>

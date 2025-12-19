@@ -7,3 +7,11 @@ export type YoutubeResult = {
 };
 
 export type DownloadType = "video" | "audio";
+
+export interface TrimSliderProps {
+  key?: string;
+  videoId?: string;
+  duration: number | string;
+  url: string;
+  downloadType: "video" | "audio";
+}
