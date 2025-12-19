@@ -14,12 +14,23 @@ export default function Content({
     url,
     downloadType,
   });
+
+  const formatTime = (s: number) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = Math.floor(s % 60);
+    return h > 0
+      ? `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${sec
+          .toString()
+          .padStart(2, "0")}`
+      : `${m.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+  };
   return (
     <section className="w-full flex flex-col items-center justify-center lg:flex-row mt-4">
       {error && <p>{error}</p>}
       <div className="h-full">
         <img
-          className="w-120 h-50 sm:h-70 "
+          className="min-w-80 md:min-w-100 sm:h-70 "
           src={data.thumbnail}
           alt={data.title}
         />
@@ -35,7 +46,7 @@ export default function Content({
               ? data.description.substring(0, 150) + "..."
               : data?.description}
           </p>
-          <p className="opacity-70">{data.duration}</p>
+          <p className="opacity-70">{formatTime(Number(data.duration))}</p>
         </div>
 
         <div>

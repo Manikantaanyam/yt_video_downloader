@@ -19,7 +19,7 @@ export default function Hero() {
     <section className="w-full px-3 sm:px-6">
       <div className="w-full flex flex-col items-center mt-4 gap-4">
         <h1 className="font-semibold text-[14px] sm:text-[18px] md:text-[22px] lg:text-[26px] text-center">
-          YOUTUBE VIDEO / AUDIO DOWNLOADER
+          YOUTUBE VIDEO / AUDIO TRIMMER
         </h1>
 
         <div className="relative flex w-44 sm:w-52 bg-black h-8 sm:h-10 rounded-full overflow-hidden">
