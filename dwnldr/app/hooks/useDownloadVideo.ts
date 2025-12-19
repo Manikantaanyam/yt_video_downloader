@@ -34,6 +34,8 @@ export default function useDownloadVideo({
         }
       );
 
+      console.log("resoinse", response.data);
+
       if (response.data) {
         const blobUrl = window.URL.createObjectURL(response.data);
         const a = document.createElement("a");
@@ -49,6 +51,7 @@ export default function useDownloadVideo({
     } catch (e) {
       console.error("Error downloading video:", e);
       setError("An error occurred while downloading the video.");
+      console.log("error", e);
     } finally {
       setLoading(false);
     }

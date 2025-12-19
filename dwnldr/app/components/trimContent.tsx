@@ -30,10 +30,8 @@ export default function TrimSlider({
   duration,
 }: TrimSliderProps) {
   const DURATION = Math.max(Number(duration), 1);
-
   const barRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef<"left" | "right" | null>(null);
-
   const stateRef = useRef({ start: 0, end: DURATION });
 
   const [barWidth, setBarWidth] = useState(0);
@@ -57,7 +55,6 @@ export default function TrimSlider({
   useEffect(() => {
     const onMove = (clientX: number) => {
       if (!draggingRef.current || !barRef.current || barWidth === 0) return;
-
       const rect = barRef.current.getBoundingClientRect();
       const x = clamp(clientX - rect.left, 0, barWidth);
       let sec =
@@ -111,15 +108,21 @@ export default function TrimSlider({
   });
 
   return (
-    <div className="max-w-225 px-3 sm:px-6 mt-6 mb-3">
+  
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 mt-4 sm:mt-6 mb-3">
       <MovieClip videoId={videoId} start={startSeconds} end={endSeconds} />
 
-      <div className="flex justify-between mt-4 text-sm sm:text-base font-mono text-black">
-        <span>{formatTime(startSeconds)}</span>
-        <span className="font-bold text-red-600">
-          Duration: {formatTime(endSeconds - startSeconds)}
+      
+      <div className="flex justify-between items-center mt-4 text-[10px] xs:text-xs sm:text-base font-mono text-black">
+        <span className="bg-gray-100 px-2 py-1 rounded">
+          {formatTime(startSeconds)}
         </span>
-        <span>{formatTime(endSeconds)}</span>
+        <span className="font-bold text-red-600 text-center">
+          Clip: {formatTime(endSeconds - startSeconds)}
+        </span>
+        <span className="bg-gray-100 px-2 py-1 rounded">
+          {formatTime(endSeconds)}
+        </span>
       </div>
 
       <div className="relative w-full">
@@ -132,7 +135,7 @@ export default function TrimSlider({
             );
           }}
           onMouseLeave={() => setHoverSeconds(null)}
-          className="relative w-full h-12 sm:h-14 mt-2 rounded-lg bg-linear-to-r from-[#2a0000] via-[#8b0000] to-[#2a0000] overflow-hidden cursor-pointer"
+          className="relative w-full h-10 sm:h-14 mt-2 rounded-lg bg-linear-to-r from-[#2a0000] via-[#8b0000] to-[#2a0000] overflow-hidden cursor-pointer shadow-inner"
         >
           {renderedTicks}
 
@@ -158,7 +161,7 @@ export default function TrimSlider({
 
         {hoverSeconds !== null && (
           <div
-            className="absolute -top-6 px-2 py-1 text-xs bg-black text-white rounded pointer-events-none"
+            className="absolute -top-7 px-2 py-1 text-[10px] sm:text-xs bg-black text-white rounded pointer-events-none z-20"
             style={{
               left: `${(hoverSeconds / DURATION) * 100}%`,
               transform: "translateX(-50%)",
@@ -169,14 +172,14 @@ export default function TrimSlider({
         )}
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className="mt-8 flex justify-center">
         <button
           disabled={loading}
           onClick={downloadVideo}
-          className="relative h-12 px-10 bg-red-600 hover:bg-red-800 text-white font-bold transition-all  rounded-md"
+          className="relative w-full sm:w-auto min-w-50 h-10 md:h-12 px-10 bg-red-600 hover:bg-red-800 text-white font-bold transition-all rounded-md uppercase tracking-wider shadow-md active:scale-95 disabled:opacity-70"
         >
           <span className={loading ? "opacity-0" : "opacity-100"}>
-           save to device
+            save to device
           </span>
           {loading && (
             <span className="absolute inset-0 flex items-center justify-center">

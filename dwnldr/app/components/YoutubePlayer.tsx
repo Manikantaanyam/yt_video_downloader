@@ -11,8 +11,8 @@ const MovieClip = ({
   end: number;
 }) => {
   const options: YouTubeProps["opts"] = {
-    height: "390",
-    width: "640",
+    height: "100%",
+    width: "100%",
     playerVars: {
       autoplay: 1,
       controls: 1,
@@ -24,11 +24,12 @@ const MovieClip = ({
   };
 
   return (
-    <div className="aspect-video w-full   bg-black">
+    <div className="relative aspect-video w-full max-w-full overflow-hidden bg-black rounded-lg shadow-lg">
       <YouTube
         key={`${videoId}-${start}-${end}`}
         videoId={videoId}
         opts={options}
+        className="absolute top-0 left-0 w-full h-full"
       />
     </div>
   );
