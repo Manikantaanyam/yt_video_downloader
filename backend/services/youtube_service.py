@@ -16,11 +16,10 @@ def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
     }
 
     if data.downloadType == "audio":
-        ydl_opts["format"] = "bestaudio/best"
+        ydl_opts["format"] = "m4a/bestaudio/best"
         ydl_opts["postprocessors"] = [{
             "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
+            "preferredcodec": "m4a",
         }]
         ydl_opts["outtmpl"] = "%(title)s.%(ext)s"
     else:
