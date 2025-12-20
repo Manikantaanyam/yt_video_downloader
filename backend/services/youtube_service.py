@@ -4,6 +4,18 @@ import shutil
 from typing import Generator
 from models.youtube import UrlData, YoutubeInfo
 
+
+def get_video_info(url: str) -> YoutubeInfo:
+    with yt_dlp.YoutubeDL({"quiet": True, "cookiefile": "cookies.txt",}) as ydl:
+        info = ydl.extract_info(url, download=False)
+        return YoutubeInfo(
+            title=info.get("title", ""),
+            description=info.get("description", ""),
+            duration=str(info.get("duration", "")),
+            thumbnail=info.get("thumbnail", ""),
+            videoId = info.get("id","")
+        )
+
 def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
     ffmpeg_path = shutil.which("ffmpeg") or "./ffmpeg"
 
