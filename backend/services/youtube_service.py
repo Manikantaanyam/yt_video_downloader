@@ -15,79 +15,52 @@ def get_video_info(url: str) -> YoutubeInfo:
             videoId = info.get("id","")
         )
 
-
-
-
-def download_video_stream(data:UrlData) -> Generator[bytes, None, None]:
-   
-    request_id = f"{int(time.time())}"
-    base_name = f"file_{request_id}"
-    
-    
-    final_ext = "mp4" if data.downloadType == "video" else "mp3"
-    actual_filename = f"{base_name}.{final_ext}"
-
+def download_video_stream(data: UrlData):
     ydl_opts = {
         "noplaylist": True,
         "overwrites": True,
-        "quiet": True, 
-        "outtmpl": f"{base_name}.%(ext)s",
+        "quiet": True,
+        "outtmpl": "%(title)s.%(ext)s",
     }
 
-    if data.downloadType == "video":
-      
-        ydl_opts.update({
-            "format": "best[ext=mp4]/best",
-            "merge_output_format": "mp4",
-            "postprocessor_args": ["-c:v", "libx264", "-c:a", "aac"],
-        })
+    def download_section(info_dict, ydl):
+        sections = [
+            {
+                "start_time" : 120,
+                "end_time" : 180
+            }
+        ]
+
+        return sections
+
+    if data.downloadType == "audio":
+        ydl_opts["format"]= "bestaudio/best"
+        if data.startTime and data.endTime:
+            ydl_opts["download_ranges"]= lambda info, ydl:[{
+                 "start_time": float(data.startTime),
+                 "end_time": float(data.endTime)
+            }]
     else:
-        ydl_opts.update({
-            "format": "bestaudio/best",
-            "postprocessors": [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192",
-            }],
-        })
+        ydl_opts["format"]= "best"
+        if data.startTime and data.endTime:
+            ydl_opts["download_ranges"]= lambda info, ydl:[{
+                 "start_time": float(data.startTime),
+                 "end_time": float(data.endTime)
+            }]
 
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(data.url, download=True)
 
-    if data.startTime is not None and data.endTime is not None:
-     
-        ydl_opts["download_ranges"] = lambda info, ydl: [{
-            "start_time": float(data.startTime),
-            "end_time": float(data.endTime)
-        }]
-        ydl_opts["force_keyframes_at_cuts"] = True
-
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([data.url])
-        
       
-        final_path = None
-        for f in os.listdir('.'):
-            if f.startswith(base_name) and f.endswith(final_ext):
-                final_path = f
+        filename = ydl.prepare_filename(info)
+
+    with open(filename, "rb") as f:
+        while True:
+            chunk = f.read(1024 * 1024)
+            if not chunk:
                 break
-        
-        if final_path and os.path.exists(final_path):
-            with open(final_path, "rb") as f:
-                while chunk := f.read(1024 * 1024):
-                    yield chunk
-        else:
-            print(f"File not found after download: {actual_filename}")
+            yield chunk
 
-    except Exception as e:
-        print(f"Download Error: {str(e)}")
-        yield b""
+    
 
-    finally:
-        time.sleep(1)
-        for f in os.listdir('.'):
-            if f.startswith(base_name):
-                try:
-                    os.remove(f)
-                except:
-                    pass
 
