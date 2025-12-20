@@ -2,6 +2,7 @@ import yt_dlp
 import os
 import shutil
 from typing import Generator
+from models.youtube import UrlData, YoutubeInfo
 
 def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
     ffmpeg_path = shutil.which("ffmpeg") or "./ffmpeg"
