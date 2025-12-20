@@ -11,12 +11,12 @@ export const NAV_LINKS = [
   },
   {
     id: "3",
-    url: "/summarize",
+    url: "#",
     label: "Summary",
   },
   {
     id: "4",
-    url: "/about",
+    url: "#",
     label: "About",
   },
 ];

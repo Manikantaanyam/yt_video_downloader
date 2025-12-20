@@ -2,7 +2,6 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from models.youtube import UrlData
 from services.youtube_service import get_video_info, download_video_stream
-import os
 
 router = APIRouter(prefix="/youtube")
 
