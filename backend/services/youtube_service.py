@@ -4,9 +4,15 @@ import shutil
 from typing import Generator
 from models.youtube import UrlData, YoutubeInfo
 
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
 
 def get_video_info(url: str) -> YoutubeInfo:
-    with yt_dlp.YoutubeDL({"quiet": True, "cookiefile": "cookies.txt",}) as ydl:
+    with yt_dlp.YoutubeDL({"quiet": True, "cookiefile": "cookies.txt", "user_agent": USER_AGENT,
+        "http_headers": {
+            "Referer": "https://www.youtube.com/",
+            "Accept-Language": "en-US,en;q=0.9",
+        }}) as ydl:
         info = ydl.extract_info(url, download=False)
         return YoutubeInfo(
             title=info.get("title", ""),
@@ -25,6 +31,11 @@ def download_video_stream(data: UrlData) -> Generator[bytes, None, None]:
         "quiet": True,
         "cookiefile": "cookies.txt",
         "ffmpeg_location": ffmpeg_path,
+        "user_agent": USER_AGENT,
+        "http_headers": {
+            "Referer": "https://www.youtube.com/",
+            "Accept-Language": "en-US,en;q=0.9",
+        }
     }
 
     if data.downloadType == "audio":
